@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mikulover69.github.io/scratch_hub/sitemap.xml
