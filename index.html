@@ -23,66 +23,82 @@
 		padding: 20px;
 		background-color: #e0e0e0;
 	}
-		.logo-container img {
-			max-width: 150px;
-			margin-bottom: 10px;
+	.logo-container img {
+		max-width: 150px; /* */
+		margin-bottom: 10px; /* */
 	}
-		.project-name {
-			font-size: 2.5em;
-			margin-bottom: 10px;
-			font-weight: bold;
+	.project-name {
+		font-size: 2.5em; /* */
+		margin-bottom: 10px; /* */
+		font-weight: bold; /* */
 	}
-		.tagline {
-			font-size: 1.2em;
-			margin-bottom: 20px;
+	.tagline {
+		font-size: 1.2em; /* */
+		margin-bottom: 20px; /* */
 	}
-		.content-section {
-			padding: 20px;
-			text-align: center;
+	.content-section {
+		padding: 20px; /* */
+		text-align: center; /* */
 	}
-		.content-section h2 {
-			margin-top: 0;
+	.content-section h2 {
+		margin-top: 0; /* */
 	}
-		.links-list {
-		list-style: none;
-			padding: 0;
+	.links-list {
+		list-style: none; /* */
+		padding: 0; /* */
 	}
-		.links-list li {
-		margin-bottom: 10px;
+	.links-list li {
+		margin-bottom: 10px; /* */
 	}
-		a {
-			color: #007bff;
-			text-decoration: none;
+	a {
+		color: #007bff; /* */
+		text-decoration: none; /* */
 	}
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    a:hover {
+        text-decoration: underline; /* */
+    }
+
+    /* START: CSS for Turbos Miku Image Button */
+    .turbos-miku-image-button-container {
+        margin-bottom: 20px; /* Space below the image button */
+        /* The content-section class already provides text-align: center, which will center this container if it's inline-block, or center its inline contents. */
+    }
+
+    .turbos-miku-button-image {
+        max-width: 170px; /* Slightly larger for a button feel, adjust as needed */
+        height: auto;
+        display: block; 
+        margin: 10px auto; /* Centered, with some margin top/bottom */
+        border: 3px solid #007bff; /* Button-like border, using existing link color */
+        border-radius: 10px; /* Rounded corners */
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition for hover */
+        cursor: pointer; /* Indicates it's clickable */
+    }
+
+    .turbos-miku-button-image:hover {
+        transform: scale(1.05); /* Slightly enlarge on hover */
+        box-shadow: 0px 6px 12px rgba(0, 123, 255, 0.4); /* Enhanced glow effect */
+        border-color: #0056b3; /* Darker border on hover */
+    }
+    /* END: CSS for Turbos Miku Image Button */
+
+	</style>
 </head>
 <body>
-<img src="images/topbanner.jpeg" alt="Site Banner" class="topbanner">
-    <header>
+<img src="images/topbanner.jpeg" alt="Site Banner" class="topbanner"> <header>
         <div class="logo-container">
-            <img src="https://ipfs.io/ipfs/bafybeifxlgdflk4sx7ur47rw4a74e2r4entlz7mzje5a773tbb7ky3zjpe" alt="HatSUIne_MIKU Logo">
-        </div>
-        <div class="project-name">HATSUINE_MIKU</div>
-        <p class="tagline">Get your $MIKU on SUI and canonically capture and digitalize your own $MIKU!</p>
-    </header>
+            <img src="https://ipfs.io/ipfs/bafybeifxlgdflk4sx7ur47rw4a74e2r4entlz7mzje5a773tbb7ky3zjpe" alt="HatSUIne_MIKU Logo"> </div>
+        <div class="project-name">HATSUINE_MIKU</div> <p class="tagline">Get your $MIKU on SUI and canonically capture and digitalize your own $MIKU!</p> </header>
 
-    <div class="content-section" id="action-link">
-        <h2>Get Involved</h2>
-        <p>
-            <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">Add Liquidity to $MIKU Pool on Turbos Finance</a>
-        </p>
+    <div class="content-section" id="action-link"> <h2>Get Involved</h2> <div class="turbos-miku-image-button-container">
+            <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">
+                <img src="images/turbosmiku.jpeg" alt="Add Liquidity for $MIKU on Turbos Finance" class="turbos-miku-button-image">
+            </a>
+        </div>
+        <p> <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">Or click here to Add Liquidity to $MIKU Pool on Turbos Finance</a> </p>
     </div>
 	
-    <div class="content-section" id="socials">
-        <h2>Connect With Us</h2>
-        <ul class="links-list">
-            <li><a href="https://x.com/hatsuinemiku?s=11&t=COHcv30MVtVroJlO5xXUHA" target="_blank">Follow us on X/Twitter</a></li>
-            <li><a href="https://t.me/+UMddYqaHGlwyNGRh" target="_blank">Join the Telegram</a></li>
-            <li><a href="https://discord.gg/7rB6RSDDyW" target="_blank">Be a part of the community on Discord</a></li>
-        </ul>
+    <div class="content-section" id="socials"> <h2>Connect With Us</h2> <ul class="links-list"> <li><a href="https://x.com/hatsuinemiku?s=11&t=COHcv30MVtVroJlO5xXUHA" target="_blank">Follow us on X/Twitter</a></li> <li><a href="https://t.me/+UMddYqaHGlwyNGRh" target="_blank">Join the Telegram</a></li> <li><a href="https://discord.gg/7rB6RSDDyW" target="_blank">Be a part of the community on Discord</a></li> </ul>
     </div>
  
 </body>
