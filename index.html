@@ -25,34 +25,33 @@
 		background-color: #e0e0e0;
 	}
 
-	/* New styles for the top navigation header */
 	.top-nav-header {
-		background-color: #333; /* Dark background for the header */
+		background-color: #333;
 		padding: 10px 0;
 		text-align: center;
 	}
 
 	.nav-button-container {
-		display: inline-block; /* Allows buttons to sit side-by-side */
-		margin: 0 10px; /* Spacing between buttons */
+		display: inline-block;
+		margin: 0 10px;
 	}
 
 	.nav-button-image {
-		width: 50px; /* Small size for the buttons */
+		width: 50px;
 		height: 50px;
-		border-radius: 50%; /* Makes them circular */
-		object-fit: cover; /* Ensures image covers the area nicely */
-		border: 2px solid #007bff; /* A small border */
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid #007bff;
 		transition: transform 0.2s ease-in-out;
 	}
 
 	.nav-button-image:hover {
-		transform: scale(1.1); /* Slightly enlarge on hover */
+		transform: scale(1.1);
 	}
 
 	.nav-button-text {
-		color: white; /* White text for button labels */
-		display: block; /* Puts text on a new line below the image */
+		color: white;
+		display: block;
 		margin-top: 5px;
 		font-size: 0.9em;
 	}
@@ -64,7 +63,6 @@
 		.logo-container img {
 			max-width: 150px;
 			margin-bottom: 10px;
-	1447fa15b6dd8b5a122abfb0fa9ef4ad3c6350ca
 	}
 	.project-name {
 		font-size: 2.5em;
@@ -120,7 +118,126 @@ box-shadow: 0px 6px 12px rgba(0, 123, 255, 0.4);
 border-color: #0056b3;
 }
 
+.hatsuine-miku-section {
+    background-color: #e6f7ff;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
 
+.hatsuine-miku-section h2 {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.hatsuine-miku-content {
+    display: flex;
+    align-items: flex-start;
+    text-align: left;
+}
+
+.hatsuine-miku-left {
+    flex: 1;
+    padding-right: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.hatsuine-miku-left img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #007bff;
+}
+
+.hatsuine-miku-right {
+    flex: 2;
+    padding-left: 20px;
+    color: #333;
+}
+
+.hatsuine-miku-right p {
+    line-height: 1.6;
+}
+
+.mikunomics-section {
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    text-align: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.mikunomics-section h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+.mikunomics-buttons-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.mikunomics-button {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mikunomics-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+
+@media (max-width: 768px) {
+    .hatsuine-miku-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    .hatsuine-miku-left, .hatsuine-miku-right {
+        padding-right: 0;
+        padding-left: 0;
+        width: 100%;
+    }
+    .hatsuine-miku-left {
+        margin-bottom: 20px;
+    }
+    .hatsuine-miku-right {
+        text-align: center;
+    }
+
+    .mikunomics-buttons-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .mikunomics-button {
+        width: auto;
+        margin-bottom: 10px;
+    }
+    .mikunomics-button:last-child {
+        margin-bottom: 0;
+    }
+}
 	</style>
 </head>
 <body>
@@ -158,23 +275,49 @@ border-color: #0056b3;
     </div>
 </div>
 
-<img src="images/topbanner.jpeg" alt="Site Banner" class="topbanner"> <header>
-<div class="logo-container">
-<img src="https://ipfs.io/ipfs/bafybeifxlgdflk4sx7ur47rw4a74e2r4entlz7mzje5a773tbb7ky3zjpe" alt="HatSUIne_MIKU Logo"> </div>
-<div class="project-name">HATSUINE_MIKU</div> <p class="tagline">Get your $MIKU on SUI and canonically capture and digitalize your own $MIKU!</p> </header>
+<img src="images/topbanner.jpeg" alt="Site Banner" class="topbanner">
+<header>
+    <div class="logo-container">
+    <img src="https://ipfs.io/ipfs/bafybeifxlgdflk4sx7ur47rw4a74e2r4entlz7mzje5a773tbb7ky3zjpe" alt="HatSUIne_MIKU Logo"> </div>
+    <div class="project-name">HATSUINE_MIKU</div>
+    <p class="tagline">Get your $MIKU on SUI and canonically capture and digitalize your own $MIKU!</p>
+</header>
 
-<div class="content-section" id="action-link"> <h2>Get Involved</h2> <div class="turbos-miku-image-button-container">
-<a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">
-<img src="images/turbosmiku.jpeg" alt="Add Liquidity for $MIKU on Turbos Finance" class="turbos-miku-button-image">
-</a>
-</div>
-<p> <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">Add Liquidity to $MIKU Pool on Turbos Finance</a> </p>
+<div class="hatsuine-miku-section">
+    <h2>HatSUIne Miku</h2>
+    <div class="hatsuine-miku-content">
+        <div class="hatsuine-miku-left">
+            <img src="images/hatsuinestory.jpeg" alt="HatSUIne Miku Story Image">
+        </div>
+        <div class="hatsuine-miku-right">
+            <p>This is where you can describe HatSUIne Miku. Talk about the project, its origins, its goals, or any interesting facts.</p>
+            <p>Feel free to add more paragraphs, lists, or any other content you deem relevant here. This right section is designed to hold textual information complementing the image on the left.</p>
+        </div>
+    </div>
 </div>
 
-				<img src=images/turbosmiku.jpeg" alt="TurbosMiku" class="turbosmiku">
-
-<div class="content-section" id="socials"> <h2>Connect With Us</h2> <ul class="links-list"> <li><a href="https://x.com/hatsuinemiku?s=11&t=COHcv30MVtVroJlO5xXUHA" target="_blank">Follow us on X/Twitter</a></li> <li><a href="https://t.me/+UMddYqaHGlwyNGRh" target="_blank">Join the Telegram</a></li> <li><a href="https://discord.gg/7rB6RSDDyW" target="_blank">Be a part of the community on Discord</a></li> </ul>
+<div class="mikunomics-section">
+    <h2>Mikunomics</h2>
+    <div class="mikunomics-buttons-container">
+        <div class="mikunomics-button">25% Burn</div>
+        <div class="mikunomics-button">15% Development Team</div>
+        <div class="mikunomics-button">60% Community</div>
+    </div>
 </div>
+
+<div class="content-section" id="action-link">
+    <h2>Get Involved</h2>
+    <div class="turbos-miku-image-button-container">
+        <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">
+            <img src="images/turbosmiku.jpeg" alt="Add Liquidity for $MIKU on Turbos Finance" class="turbos-miku-button-image">
+        </a>
+    </div>
+    <p>
+        <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">Add Liquidity to $MIKU Pool on Turbos Finance</a>
+    </p>
+</div>
+
+<img src="images/turbosmiku.jpeg" alt="TurbosMiku" class="turbosmiku">
 
 </body>
 </html>
