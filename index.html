@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>HatSUIne_MIKU</title>
 	<style>
-	
+
    .topbanner {
 		width: 100%;
 		height: auto;
@@ -16,13 +16,45 @@
 		font-family: Arial, sans-serif;
 		margin: 0;
 		padding: 0;
-		background-color: #f0f0f0; 
-		color: #333; 
+		background-color: #f0f0f0;
+		color: #333;
 	}
 	header {
 		text-align: center;
 		padding: 20px;
 		background-color: #e0e0e0;
+	}
+
+	/* New styles for the top navigation header */
+	.top-nav-header {
+		background-color: #333; /* Dark background for the header */
+		padding: 10px 0;
+		text-align: center;
+	}
+
+	.nav-button-container {
+		display: inline-block; /* Allows buttons to sit side-by-side */
+		margin: 0 10px; /* Spacing between buttons */
+	}
+
+	.nav-button-image {
+		width: 50px; /* Small size for the buttons */
+		height: 50px;
+		border-radius: 50%; /* Makes them circular */
+		object-fit: cover; /* Ensures image covers the area nicely */
+		border: 2px solid #007bff; /* A small border */
+		transition: transform 0.2s ease-in-out;
+	}
+
+	.nav-button-image:hover {
+		transform: scale(1.1); /* Slightly enlarge on hover */
+	}
+
+	.nav-button-text {
+		color: white; /* White text for button labels */
+		display: block; /* Puts text on a new line below the image */
+		margin-top: 5px;
+		font-size: 0.9em;
 	}
 
 	.tubosmiku img {
@@ -35,46 +67,46 @@
 	1447fa15b6dd8b5a122abfb0fa9ef4ad3c6350ca
 	}
 	.project-name {
-		font-size: 2.5em; 
-		margin-bottom: 10px; 
-		font-weight: bold; 
+		font-size: 2.5em;
+		margin-bottom: 10px;
+		font-weight: bold;
 	}
 	.tagline {
-		font-size: 1.2em; 
-		margin-bottom: 20px; 
+		font-size: 1.2em;
+		margin-bottom: 20px;
 	}
 	.content-section {
-		padding: 20px; 
-		text-align: center; 
+		padding: 20px;
+		text-align: center;
 	}
 	.content-section h2 {
-		margin-top: 0; 
+		margin-top: 0;
 	}
 	.links-list {
-		list-style: none; 
-		padding: 0; 
+		list-style: none;
+		padding: 0;
 	}
 	.links-list li {
-		margin-bottom: 10px; 
+		margin-bottom: 10px;
 	}
 	a {
-		color: #007bff; 
-		text-decoration: none; 
+		color: #007bff;
+		text-decoration: none;
 	}
 a:hover {
-text-decoration: underline; 
+text-decoration: underline;
 }
 
 
 .turbos-miku-image-button-container {
 margin-bottom: 20px;
-  
+
 }
 
 .turbos-miku-button-image {
 max-width: 170px;
 height: auto;
-display: block; 
+display: block;
 margin: 10px auto;
 border: 3px solid #007bff;
 border-radius: 10px;
@@ -92,6 +124,40 @@ border-color: #0056b3;
 	</style>
 </head>
 <body>
+
+<div class="top-nav-header">
+    <div class="nav-button-container">
+        <a href="YOUR_GET_MIKU_LINK_HERE" target="_blank">
+            <img src="images/get_miku_button.jpeg" alt="Get Miku" class="nav-button-image">
+            <span class="nav-button-text">Get Miku</span>
+        </a>
+    </div>
+    <div class="nav-button-container">
+        <a href="YOUR_MEMES_LINK_HERE" target="_blank">
+            <img src="images/memes_button.jpeg" alt="Memes" class="nav-button-image">
+            <span class="nav-button-text">Memes</span>
+        </a>
+    </div>
+    <div class="nav-button-container">
+        <a href="https://discord.gg/7rB6RSDDyW" target="_blank">
+            <img src="images/discord_button.jpeg" alt="Discord" class="nav-button-image">
+            <span class="nav-button-text">Discord</span>
+        </a>
+    </div>
+    <div class="nav-button-container">
+        <a href="https://t.me/+UMddYqaHGlwyNGRh" target="_blank">
+            <img src="images/telegram_button.jpeg" alt="Telegram" class="nav-button-image">
+            <span class="nav-button-text">Telegram</span>
+        </a>
+    </div>
+    <div class="nav-button-container">
+        <a href="https://x.com/hatsuinemiku?s=11&t=COHcv30MVtVroJlO5xXUHA" target="_blank">
+            <img src="images/x_button.jpeg" alt="X" class="nav-button-image">
+            <span class="nav-button-text">X</span>
+        </a>
+    </div>
+</div>
+
 <img src="images/topbanner.jpeg" alt="Site Banner" class="topbanner"> <header>
 <div class="logo-container">
 <img src="https://ipfs.io/ipfs/bafybeifxlgdflk4sx7ur47rw4a74e2r4entlz7mzje5a773tbb7ky3zjpe" alt="HatSUIne_MIKU Logo"> </div>
@@ -104,11 +170,11 @@ border-color: #0056b3;
 </div>
 <p> <a href="https://app.turbos.finance/#/pools/0x74c4757086cfd7d0cba79c3f9e1f76a1912f2a957cfa9efaceb4b9379459a73f/add-liquidity" target="_blank">Add Liquidity to $MIKU Pool on Turbos Finance</a> </p>
 </div>
-				
+
 				<img src=images/turbosmiku.jpeg" alt="TurbosMiku" class="turbosmiku">
-	
+
 <div class="content-section" id="socials"> <h2>Connect With Us</h2> <ul class="links-list"> <li><a href="https://x.com/hatsuinemiku?s=11&t=COHcv30MVtVroJlO5xXUHA" target="_blank">Follow us on X/Twitter</a></li> <li><a href="https://t.me/+UMddYqaHGlwyNGRh" target="_blank">Join the Telegram</a></li> <li><a href="https://discord.gg/7rB6RSDDyW" target="_blank">Be a part of the community on Discord</a></li> </ul>
 </div>
- 
+
 </body>
 </html>
