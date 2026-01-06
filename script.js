@@ -55,7 +55,7 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
     }
   });
 });
-const PASSCODE = "meow123"; // 🔑 CHANGE THIS
+const PASSCODE = "iwillbenicetoremi"; // 🔑 CHANGE THIS
 
 const buttons = document.querySelectorAll(".grid button");
 const unlockBtn = document.getElementById("unlockBtn");
@@ -68,7 +68,7 @@ buttons.forEach(btn => {
 });
 
 unlockBtn.addEventListener("click", () => {
-  if (codeInput.value === fag) {
+  if (codeInput.value === PASSCODE) {
     buttons.forEach(btn => {
       btn.disabled = false;
     });
