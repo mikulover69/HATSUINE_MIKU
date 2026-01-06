@@ -1,7 +1,14 @@
 const WEBHOOKS = {
-  hook1: "https://hooks.zapier.com/hooks/catch/25934949/uwkjao5/",
+  hook1: "PASTE_ZAPIER_WEBHOOK_1",
   hook2: "PASTE_ZAPIER_WEBHOOK_2",
   hook3: "PASTE_ZAPIER_WEBHOOK_3",
+  hook4: "PASTE_ZAPIER_WEBHOOK_4",
+  hook5: "PASTE_ZAPIER_WEBHOOK_5",
+  hook6: "PASTE_ZAPIER_WEBHOOK_6",
+  hook7: "PASTE_ZAPIER_WEBHOOK_7",
+  hook8: "PASTE_ZAPIER_WEBHOOK_8",
+  hook9: "PASTE_ZAPIER_WEBHOOK_9",
+  hook10: "PASTE_ZAPIER_WEBHOOK_10",
 };
 
 const statusEl = document.getElementById("status");
@@ -13,12 +20,9 @@ function setStatus(msg) {
 async function fireZapier(url, payload) {
   const res = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
   return res.ok;
 }
 
@@ -35,7 +39,7 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
     const payload = {
       button: key,
       fired_at: new Date().toISOString(),
-      source: "github-pages-site",
+      source: "hatsuinemiku.com",
     };
 
     btn.disabled = true;
