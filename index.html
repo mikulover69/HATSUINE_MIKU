@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Webhook Buttons</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; padding: 32px; max-width: 720px; margin: 0 auto; }
+    h1 { margin-bottom: 8px; }
+    p { margin-top: 0; opacity: 0.8; }
+    .wrap { display: grid; gap: 12px; margin-top: 24px; }
+    button { padding: 14px 16px; font-size: 16px; border: 0; border-radius: 12px; cursor: pointer; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status { margin-top: 18px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Webhook Buttons</h1>
+  <p>Click a button to trigger its webhook.</p>
+
+  <div class="wrap">
+    <button data-hook="hook1">Button 1</button>
+    <button data-hook="hook2">Button 2</button>
+    <button data-hook="hook3">Button 3</button>
+  </div>
+
+  <div class="status" id="status">Ready.</div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
