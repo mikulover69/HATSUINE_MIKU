@@ -1,7 +1,7 @@
 const WEBHOOKS = {
   hook1: "https://hooks.zapier.com/hooks/catch/25934949/uwkjao5/",
   hook2: "https://hooks.zapier.com/hooks/catch/25934949/uwfbwpx/",
-  hook3: "PASTE_ZAPIER_WEBHOOK_3",
+  hook3: "https://hooks.zapier.com/hooks/catch/25934949/uwfbcir/",
   hook4: "PASTE_ZAPIER_WEBHOOK_4",
   hook5: "PASTE_ZAPIER_WEBHOOK_5",
   hook6: "PASTE_ZAPIER_WEBHOOK_6",
