@@ -3,25 +3,94 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Webhook Buttons</title>
+  <title>Webhook Control Panel</title>
+
   <style>
-    body { font-family: system-ui, Arial, sans-serif; padding: 32px; max-width: 720px; margin: 0 auto; }
-    h1 { margin-bottom: 8px; }
-    p { margin-top: 0; opacity: 0.8; }
-    .wrap { display: grid; gap: 12px; margin-top: 24px; }
-    button { padding: 14px 16px; font-size: 16px; border: 0; border-radius: 12px; cursor: pointer; }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .status { margin-top: 18px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      padding: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #0f0f14;
+      color: #fff;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+    }
+
+    p {
+      margin-top: 0;
+      opacity: 0.8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: #2a2a3a;
+      color: white;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 🔴 First button */
+    button.danger {
+      background: #c0392b;
+    }
+
+    .status {
+      margin-top: 24px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      white-space: pre-wrap;
+      opacity: 0.9;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
 </head>
-<body>
-  <h1>Webhook Buttons</h1>
-  <p>Click a button to trigger its webhook.</p>
 
-  <div class="wrap">
-    <button data-hook="hook1">Button 1</button>
+<body>
+  <h1>Webhook Control Panel</h1>
+  <p>Trigger Zapier automations</p>
+
+  <div class="grid">
+    <button class="danger" data-hook="hook1">Button 1</button>
     <button data-hook="hook2">Button 2</button>
     <button data-hook="hook3">Button 3</button>
+
+    <button data-hook="hook4">Button 4</button>
+    <button data-hook="hook5">Button 5</button>
+    <button data-hook="hook6">Button 6</button>
+
+    <button data-hook="hook7">Button 7</button>
+    <button data-hook="hook8">Button 8</button>
+    <button data-hook="hook9">Button 9</button>
+
+    <button data-hook="hook10">Button 10</button>
   </div>
 
   <div class="status" id="status">Ready.</div>
