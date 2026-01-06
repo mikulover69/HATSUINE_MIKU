@@ -55,3 +55,27 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
     }
   });
 });
+const PASSCODE = "meow123"; // 🔑 CHANGE THIS
+
+const buttons = document.querySelectorAll(".grid button");
+const unlockBtn = document.getElementById("unlockBtn");
+const codeInput = document.getElementById("codeInput");
+const status = document.getElementById("status");
+
+// Lock all buttons initially
+buttons.forEach(btn => {
+  btn.disabled = true;
+});
+
+unlockBtn.addEventListener("click", () => {
+  if (codeInput.value === PASSCODE) {
+    buttons.forEach(btn => {
+      btn.disabled = false;
+    });
+    status.textContent = "🔓 Unlocked.";
+    codeInput.value = "";
+  } else {
+    status.textContent = "❌ Wrong code.";
+    codeInput.value = "";
+  }
+});
