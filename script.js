@@ -68,7 +68,7 @@ buttons.forEach(btn => {
 });
 
 unlockBtn.addEventListener("click", () => {
-  if (codeInput.value === PASSCODE) {
+  if (codeInput.value === fag) {
     buttons.forEach(btn => {
       btn.disabled = false;
     });
