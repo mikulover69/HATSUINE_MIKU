@@ -100,7 +100,7 @@
       opacity: 0.9;
     }
 
-    /* ⏱ Timer UI */
+    /* ⏱ Timer UI (NEW) */
     #timerRow {
       margin-top: 18px;
       display: flex;
@@ -135,11 +135,6 @@
       background: #b00020; /* red default */
       box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
       display: inline-block;
-    }
-
-    #cooldownReadout {
-      font-family: ui-monospace, monospace;
-      opacity: 0.9;
     }
 
     @media (max-width: 640px) {
@@ -178,7 +173,7 @@
 
   <div class="status" id="status">🔒 Locked.</div>
 
-  <!-- ⏱ Timer Controls -->
+  <!-- ⏱ Timer Controls (NEW) -->
   <div id="timerRow">
     <label class="timerLabel">
       Timer?
@@ -190,8 +185,6 @@
       Seconds:
       <input type="number" id="timerSeconds" min="0" step="1" value="5" />
     </label>
-
-    <div id="cooldownReadout">Timer: off</div>
   </div>
 
   <script src="./script.js"></script>
