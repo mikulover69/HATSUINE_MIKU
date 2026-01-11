@@ -1,205 +1,199 @@
-const WEBHOOKS = {
-  hook1: "https://hooks.zapier.com/hooks/catch/25934949/uwkjao5/",
-  hook2: "https://hooks.zapier.com/hooks/catch/25934949/uwfbwpx/",
-  hook3: "https://hooks.zapier.com/hooks/catch/25934949/uwfbcir/",
-  hook4: "https://hooks.zapier.com/hooks/catch/25934949/uwf36ad/",
-  hook5: "https://hooks.zapier.com/hooks/catch/25934949/uwf3efi/",
-  hook6: "https://hooks.zapier.com/hooks/catch/25934949/uwfusr7/",
-  hook7: "https://hooks.zapier.com/hooks/catch/25934949/uwf438a/",
-  hook8: "https://hooks.zapier.com/hooks/catch/25934949/uwf47mv/",
-  hook9: "https://hooks.zapier.com/hooks/catch/25934949/uwf6ri2/",
-  hook10: "https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
-};
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Webhook Control Panel</title>
 
-// =========================
-// Status helpers
-// =========================
-const statusEl = document.getElementById("status");
-function setStatus(msg) {
-  statusEl.textContent = msg;
-}
-
-// =========================
-// Network helpers
-// =========================
-async function fireZapier(url, payload) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  return res.ok;
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// =========================
-// ⏱ Timer + Batch mode controls
-// =========================
-const timerToggle = document.getElementById("timerToggle");
-const timerSeconds = document.getElementById("timerSeconds");
-const timerIndicator = document.getElementById("timerIndicator");
-const allAtOnceToggle = document.getElementById("allAtOnceToggle");
-
-function isTimerOn() {
-  return !!timerToggle?.checked;
-}
-
-function getDelaySeconds() {
-  const n = Number(timerSeconds?.value);
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-
-function isAllAtOnceOn() {
-  return !!allAtOnceToggle?.checked;
-}
-
-function updateTimerIndicator() {
-  if (!timerIndicator) return;
-
-  if (isTimerOn()) {
-    timerIndicator.style.background = "#00c853"; // green
-    timerIndicator.style.boxShadow = "0 0 10px rgba(0, 200, 83, 0.35)";
-  } else {
-    timerIndicator.style.background = "#b00020"; // red
-    timerIndicator.style.boxShadow = "0 0 10px rgba(176, 0, 32, 0.35)";
-  }
-}
-
-timerToggle?.addEventListener("change", updateTimerIndicator);
-updateTimerIndicator();
-
-// =========================
-// 🔐 Lock / Unlock
-// =========================
-const PASSCODE = "iwillbenicetoremi"; // 🔑 CHANGE THIS
-const buttons = document.querySelectorAll(".grid button");
-const unlockBtn = document.getElementById("unlockBtn");
-const codeInput = document.getElementById("codeInput");
-
-let unlocked = false;
-
-// Lock all buttons initially
-buttons.forEach((btn) => (btn.disabled = true));
-
-unlockBtn.addEventListener("click", () => {
-  if (codeInput.value === PASSCODE) {
-    unlocked = true;
-    buttons.forEach((btn) => (btn.disabled = false));
-    setStatus("🔓 Unlocked.");
-    codeInput.value = "";
-  } else {
-    setStatus("❌ Wrong code.");
-    codeInput.value = "";
-  }
-});
-
-// =========================
-// All-at-once batching state
-// =========================
-// For each hook key, we keep a batch object if batching is active.
-// A batch holds queued payloads and one timer that releases them together.
-const batches = new Map(); // key -> { payloads: [], timeoutId: number|null }
-
-function queueBatch(key, url, payload, secs) {
-  let batch = batches.get(key);
-  if (!batch) {
-    batch = { payloads: [], timeoutId: null };
-    batches.set(key, batch);
-  }
-
-  batch.payloads.push(payload);
-  const count = batch.payloads.length;
-
-  // If no timer yet, start one. All queued payloads will fire together when it ends.
-  if (!batch.timeoutId) {
-    batch.timeoutId = setTimeout(async () => {
-      const payloadsToFire = batch.payloads.slice();
-      batch.payloads = [];
-      clearTimeout(batch.timeoutId);
-      batch.timeoutId = null;
-
-      setStatus(`⏳ ${key}: firing ${payloadsToFire.length} queued at once...`);
-
-      // Fire all at once (parallel)
-      await Promise.allSettled(
-        payloadsToFire.map(async (p) => {
-          try {
-            await fireZapier(url, p);
-          } catch (_) {}
-        })
-      );
-
-      setStatus(`✅ ${key}: fired ${payloadsToFire.length} at once`);
-    }, Math.max(0, secs) * 1000);
-  }
-
-  return count;
-}
-
-// =========================
-// ✅ Webhook buttons
-// =========================
-document.querySelectorAll("button[data-hook]").forEach((btn) => {
-  // Guard against double-binding
-  if (btn.dataset.bound === "1") return;
-  btn.dataset.bound = "1";
-
-  btn.addEventListener("click", () => {
-    if (!unlocked) {
-      setStatus("🔒 Locked.");
-      return;
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      padding: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #0f0f14;
+      color: #fff;
     }
 
-    const key = btn.dataset.hook;
-    const url = WEBHOOKS[key];
-
-    if (!url) {
-      setStatus(`❌ Missing webhook for ${key}`);
-      return;
+    h1 {
+      margin-bottom: 6px;
     }
 
-    const payload = {
-      button: key,
-      fired_at: new Date().toISOString(),
-      source: "hatsuinemiku.com",
-    };
-
-    const secs = isTimerOn() ? getDelaySeconds() : 0;
-
-    // Mode A: All-at-once batching
-    if (isTimerOn() && isAllAtOnceOn() && secs > 0) {
-      const count = queueBatch(key, url, payload, secs);
-      setStatus(`⏳ ${key}: queued (${count}) — will all fire in ${secs}s`);
-      return;
+    p {
+      margin-top: 0;
+      opacity: 0.8;
     }
 
-    // Mode B: Normal (each click fires secs after its own click)
-    const qKey = `q_${key}`;
-    const current = Number(btn.dataset[qKey] || "0") || 0;
-    btn.dataset[qKey] = String(current + 1);
-
-    if (secs > 0) {
-      setStatus(`⏳ ${key}: queued (${current + 1}) — fires in ${secs}s`);
-    } else {
-      setStatus(`⏳ ${key}: queued (${current + 1}) — firing now`);
+    /* 🔐 Lock area */
+    #lock {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
     }
 
-    (async () => {
-      try {
-        if (secs > 0) await sleep(secs * 1000);
+    #lock input {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+    }
 
-        const remaining = Math.max(0, (Number(btn.dataset[qKey] || "1") || 1) - 1);
-        btn.dataset[qKey] = String(remaining);
+    #lock button {
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: none;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+    }
 
-        setStatus(`⏳ ${key}: triggering...`);
-        const ok = await fireZapier(url, payload);
-        setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
-      } catch (err) {
-        setStatus(`✅ ${key} triggered`);
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: #2a2a3a;
+      color: white;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 🔴 Normal danger */
+    button.danger {
+      background: #c0392b;
+    }
+
+    /* 🔥 SUPER RED */
+    button.super-danger {
+      background: #ff0000;
+      box-shadow: 0 0 18px #ff0000aa;
+      font-weight: 700;
+    }
+
+    button.super-danger:hover:not(:disabled) {
+      box-shadow: 0 0 28px #ff0000cc;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .status {
+      margin-top: 24px;
+      font-family: ui-monospace, monospace;
+      white-space: pre-wrap;
+      opacity: 0.9;
+    }
+
+    /* ⏱ Timer UI */
+    #timerRow {
+      margin-top: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-radius: 14px;
+      background: #191925;
+    }
+
+    .timerLabel {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    #timerSeconds {
+      width: 110px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+    }
+
+    #timerIndicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: #b00020; /* red default */
+      box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
+      display: inline-block;
+    }
+
+    #cooldownReadout {
+      font-family: ui-monospace, monospace;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
       }
-    })();
-  });
-});
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Be Sweet ^w^</h1>
+  <p>>w<</p>
+
+  <!-- 🔐 Passcode lock -->
+  <div id="lock">
+    <input type="password" id="codeInput" placeholder="Enter code" />
+    <button id="unlockBtn">Unlock</button>
+  </div>
+
+  <div class="grid">
+    <button class="danger" data-hook="hook1">100%</button>
+    <button data-hook="hook2">75%</button>
+    <button data-hook="hook3">60%</button>
+
+    <button data-hook="hook4">Beep 100%</button>
+    <button data-hook="hook5">Beep 60%</button>
+    <button data-hook="hook6">Beep 40%</button>
+
+    <button data-hook="hook7">Vibrate 100%</button>
+    <button data-hook="hook8">Vibrate 60%</button>
+    <button data-hook="hook9">Beep 3 Times</button>
+
+    <button class="super-danger" data-hook="hook10">Dont press pls</button>
+  </div>
+
+  <div class="status" id="status">🔒 Locked.</div>
+
+  <!-- ⏱ Timer Controls -->
+  <div id="timerRow">
+    <label class="timerLabel">
+      Timer?
+      <input type="checkbox" id="timerToggle" />
+      <span id="timerIndicator" title="Timer status"></span>
+    </label>
+
+    <label class="timerLabel">
+      Seconds:
+      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
+    </label>
+
+    <div id="cooldownReadout">Timer: off</div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
