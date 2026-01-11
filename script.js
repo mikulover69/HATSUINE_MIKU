@@ -8,15 +8,32 @@ const WEBHOOKS = {
   hook7: "https://hooks.zapier.com/hooks/catch/25934949/uwf438a/",
   hook8: "https://hooks.zapier.com/hooks/catch/25934949/uwf47mv/",
   hook9: "https://hooks.zapier.com/hooks/catch/25934949/uwf6ri2/",
-  hook10:"https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
+  hook10: "https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
 };
 
 // =========================
-// Status helpers
+// Status helpers (+ streak counter)
 // =========================
 const statusEl = document.getElementById("status");
+
+// Counts upward from 0 when presses are within 10s of each other.
+// If >10s since last press, resets to 0.
+let pressCount = 0;
+let lastPressAtMs = 0;
+const PRESS_WINDOW_MS = 10_000;
+
+function recordPressAndUpdateCount() {
+  const now = Date.now();
+  if (lastPressAtMs && now - lastPressAtMs <= PRESS_WINDOW_MS) {
+    pressCount += 1;
+  } else {
+    pressCount = 0;
+  }
+  lastPressAtMs = now;
+}
+
 function setStatus(msg) {
-  statusEl.textContent = msg;
+  statusEl.textContent = `[#${pressCount}] ${msg}`;
 }
 
 // =========================
@@ -94,6 +111,7 @@ unlockBtn.addEventListener("click", () => {
 // - NO lockout
 // - Multiple clicks allowed
 // - Each click queues its own delayed fire
+// - Press counter increments if within 10s of last press
 // =========================
 document.querySelectorAll("button[data-hook]").forEach((btn) => {
   // Guard against double-binding
@@ -105,6 +123,9 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       setStatus("🔒 Locked.");
       return;
     }
+
+    // ✅ update streak counter on EVERY press
+    recordPressAndUpdateCount();
 
     const key = btn.dataset.hook;
     const url = WEBHOOKS[key];
@@ -140,7 +161,10 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
         if (secs > 0) await sleep(secs * 1000);
 
         // decrement queued just before firing
-        const remaining = Math.max(0, (Number(btn.dataset[qKey] || "1") || 1) - 1);
+        const remaining = Math.max(
+          0,
+          (Number(btn.dataset[qKey] || "1") || 1) - 1
+        );
         btn.dataset[qKey] = String(remaining);
 
         setStatus(`⏳ ${key}: triggering...`);
