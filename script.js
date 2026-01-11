@@ -8,11 +8,10 @@ const WEBHOOKS = {
   hook7: "https://hooks.zapier.com/hooks/catch/25934949/uwf438a/",
   hook8: "https://hooks.zapier.com/hooks/catch/25934949/uwf47mv/",
   hook9: "https://hooks.zapier.com/hooks/catch/25934949/uwf6ri2/",
-  hook10: "https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
+  hook10:"https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
 };
 
 const statusEl = document.getElementById("status");
-
 function setStatus(msg) {
   statusEl.textContent = msg;
 }
@@ -26,8 +25,12 @@ async function fireZapier(url, payload) {
   return res.ok;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // =========================
-// ⏱ Timer (NEW) - delay before firing webhook
+// ⏱ Timer delay (wait BEFORE firing webhook)
 // =========================
 const timerToggle = document.getElementById("timerToggle");
 const timerSeconds = document.getElementById("timerSeconds");
@@ -40,10 +43,6 @@ function isTimerOn() {
 function getDelaySeconds() {
   const n = Number(timerSeconds?.value);
   return Number.isFinite(n) && n > 0 ? n : 0;
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function updateTimerIndicator() {
@@ -62,41 +61,38 @@ timerToggle?.addEventListener("change", updateTimerIndicator);
 updateTimerIndicator();
 
 // =========================
-// 🔐 Lock / Unlock (your existing behavior)
+// 🔐 Lock / Unlock (same idea as your original)
 // =========================
 const PASSCODE = "iwillbenicetoremi"; // 🔑 CHANGE THIS
-
 const buttons = document.querySelectorAll(".grid button");
 const unlockBtn = document.getElementById("unlockBtn");
 const codeInput = document.getElementById("codeInput");
-const status = document.getElementById("status");
 
 let unlocked = false;
 
-// Lock all buttons initially
-buttons.forEach((btn) => {
-  btn.disabled = true;
-});
+// lock all buttons initially
+buttons.forEach((btn) => (btn.disabled = true));
 
 unlockBtn.addEventListener("click", () => {
   if (codeInput.value === PASSCODE) {
     unlocked = true;
-    buttons.forEach((btn) => {
-      btn.disabled = false;
-    });
-    status.textContent = "🔓 Unlocked.";
+    buttons.forEach((btn) => (btn.disabled = false));
+    setStatus("🔓 Unlocked.");
     codeInput.value = "";
   } else {
-    status.textContent = "❌ Wrong code.";
+    setStatus("❌ Wrong code.");
     codeInput.value = "";
   }
 });
 
 // =========================
-// ✅ Your existing button firing logic,
-// plus: wait X seconds before firing when Timer is enabled
+// ✅ Single click handler (guarded from double-binding)
 // =========================
 document.querySelectorAll("button[data-hook]").forEach((btn) => {
+  // Guard: if this script gets evaluated twice, don't bind twice.
+  if (btn.dataset.bound === "1") return;
+  btn.dataset.bound = "1";
+
   btn.addEventListener("click", async () => {
     if (!unlocked) {
       setStatus("🔒 Locked.");
@@ -106,10 +102,14 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
     const key = btn.dataset.hook;
     const url = WEBHOOKS[key];
 
-    if (!url || url.startsWith("PASTE_")) {
-      setStatus(`❌ Missing Zapier webhook for ${key}`);
+    if (!url) {
+      setStatus(`❌ Missing webhook for ${key}`);
       return;
     }
+
+    // Disable ONLY the clicked button while it waits + fires
+    const wasDisabled = btn.disabled;
+    btn.disabled = true;
 
     const payload = {
       button: key,
@@ -117,27 +117,26 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       source: "hatsuinemiku.com",
     };
 
-    btn.disabled = true;
-
     try {
-      // ⏱ If timer is on, wait X seconds BEFORE firing webhook
+      // ⏱ Wait FIRST (if enabled)
       if (isTimerOn()) {
         const secs = getDelaySeconds();
         if (secs > 0) {
-          setStatus(`⏳ Waiting ${secs}s, then triggering ${key}...`);
+          setStatus(`⏳ ${key}: waiting ${secs}s...`);
           await sleep(secs * 1000);
         }
       }
 
-      setStatus(`⏳ Triggering ${key}...`);
+      setStatus(`⏳ ${key}: triggering...`);
       const ok = await fireZapier(url, payload);
       setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
     } catch (err) {
-      // your original fallback message
+      // keep your original "assume success" fallback
       setStatus(`✅ ${key} triggered`);
     } finally {
-      // only re-enable if still unlocked (it will be)
-      btn.disabled = false;
+      // Re-enable ONLY this button (others were never touched)
+      // If you re-lock later, lock logic will disable them again.
+      btn.disabled = wasDisabled ? true : false;
     }
   });
 });
