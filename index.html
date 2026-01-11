@@ -100,6 +100,48 @@
       opacity: 0.9;
     }
 
+    /* ⏱ Timer UI */
+    #timerRow {
+      margin-top: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-radius: 14px;
+      background: #191925;
+    }
+
+    .timerLabel {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    #timerSeconds {
+      width: 110px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+    }
+
+    #timerIndicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: #b00020; /* red default */
+      box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
+      display: inline-block;
+    }
+
+    #cooldownReadout {
+      font-family: ui-monospace, monospace;
+      opacity: 0.9;
+    }
+
     @media (max-width: 640px) {
       .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -135,6 +177,22 @@
   </div>
 
   <div class="status" id="status">🔒 Locked.</div>
+
+  <!-- ⏱ Timer Controls -->
+  <div id="timerRow">
+    <label class="timerLabel">
+      Timer?
+      <input type="checkbox" id="timerToggle" />
+      <span id="timerIndicator" title="Timer status"></span>
+    </label>
+
+    <label class="timerLabel">
+      Seconds:
+      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
+    </label>
+
+    <div id="cooldownReadout">Timer: off</div>
+  </div>
 
   <script src="./script.js"></script>
 </body>
