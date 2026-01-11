@@ -11,11 +11,17 @@ const WEBHOOKS = {
   hook10:"https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
 };
 
+// =========================
+// Status helpers
+// =========================
 const statusEl = document.getElementById("status");
 function setStatus(msg) {
   statusEl.textContent = msg;
 }
 
+// =========================
+// Network helpers
+// =========================
 async function fireZapier(url, payload) {
   const res = await fetch(url, {
     method: "POST",
@@ -47,7 +53,6 @@ function getDelaySeconds() {
 
 function updateTimerIndicator() {
   if (!timerIndicator) return;
-
   if (isTimerOn()) {
     timerIndicator.style.background = "#00c853"; // green
     timerIndicator.style.boxShadow = "0 0 10px rgba(0, 200, 83, 0.35)";
@@ -56,12 +61,11 @@ function updateTimerIndicator() {
     timerIndicator.style.boxShadow = "0 0 10px rgba(176, 0, 32, 0.35)";
   }
 }
-
 timerToggle?.addEventListener("change", updateTimerIndicator);
 updateTimerIndicator();
 
 // =========================
-// 🔐 Lock / Unlock (same idea as your original)
+// 🔐 Lock / Unlock
 // =========================
 const PASSCODE = "iwillbenicetoremi"; // 🔑 CHANGE THIS
 const buttons = document.querySelectorAll(".grid button");
@@ -70,7 +74,7 @@ const codeInput = document.getElementById("codeInput");
 
 let unlocked = false;
 
-// lock all buttons initially
+// Lock all buttons initially
 buttons.forEach((btn) => (btn.disabled = true));
 
 unlockBtn.addEventListener("click", () => {
@@ -86,14 +90,17 @@ unlockBtn.addEventListener("click", () => {
 });
 
 // =========================
-// ✅ Single click handler (guarded from double-binding)
+// ✅ Webhook buttons
+// - NO lockout
+// - Multiple clicks allowed
+// - Each click queues its own delayed fire
 // =========================
 document.querySelectorAll("button[data-hook]").forEach((btn) => {
-  // Guard: if this script gets evaluated twice, don't bind twice.
+  // Guard against double-binding
   if (btn.dataset.bound === "1") return;
   btn.dataset.bound = "1";
 
-  btn.addEventListener("click", async () => {
+  btn.addEventListener("click", () => {
     if (!unlocked) {
       setStatus("🔒 Locked.");
       return;
@@ -107,36 +114,42 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       return;
     }
 
-    // Disable ONLY the clicked button while it waits + fires
-    const wasDisabled = btn.disabled;
-    btn.disabled = true;
-
     const payload = {
       button: key,
       fired_at: new Date().toISOString(),
       source: "hatsuinemiku.com",
     };
 
-    try {
-      // ⏱ Wait FIRST (if enabled)
-      if (isTimerOn()) {
-        const secs = getDelaySeconds();
-        if (secs > 0) {
-          setStatus(`⏳ ${key}: waiting ${secs}s...`);
-          await sleep(secs * 1000);
-        }
-      }
+    // Determine delay per click
+    const secs = isTimerOn() ? getDelaySeconds() : 0;
 
-      setStatus(`⏳ ${key}: triggering...`);
-      const ok = await fireZapier(url, payload);
-      setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
-    } catch (err) {
-      // keep your original "assume success" fallback
-      setStatus(`✅ ${key} triggered`);
-    } finally {
-      // Re-enable ONLY this button (others were never touched)
-      // If you re-lock later, lock logic will disable them again.
-      btn.disabled = wasDisabled ? true : false;
+    // Track queued count per button (UI only)
+    const qKey = `q_${key}`;
+    const current = Number(btn.dataset[qKey] || "0") || 0;
+    btn.dataset[qKey] = String(current + 1);
+
+    if (secs > 0) {
+      setStatus(`⏳ ${key}: queued (${current + 1}) — fires in ${secs}s`);
+    } else {
+      setStatus(`⏳ ${key}: queued (${current + 1}) — firing now`);
     }
+
+    // Fire in background (do not block UI)
+    (async () => {
+      try {
+        if (secs > 0) await sleep(secs * 1000);
+
+        // decrement queued just before firing
+        const remaining = Math.max(0, (Number(btn.dataset[qKey] || "1") || 1) - 1);
+        btn.dataset[qKey] = String(remaining);
+
+        setStatus(`⏳ ${key}: triggering...`);
+        const ok = await fireZapier(url, payload);
+        setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
+      } catch (err) {
+        // Keep original behavior: assume success if fetch throws
+        setStatus(`✅ ${key} triggered`);
+      }
+    })();
   });
 });
