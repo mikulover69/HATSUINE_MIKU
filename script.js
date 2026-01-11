@@ -12,28 +12,11 @@ const WEBHOOKS = {
 };
 
 // =========================
-// Status helpers (+ streak counter)
+// Status helpers
 // =========================
 const statusEl = document.getElementById("status");
-
-// Counts upward from 0 when presses are within 10s of each other.
-// If >10s since last press, resets to 0.
-let pressCount = 0;
-let lastPressAtMs = 0;
-const PRESS_WINDOW_MS = 10_000;
-
-function recordPressAndUpdateCount() {
-  const now = Date.now();
-  if (lastPressAtMs && now - lastPressAtMs <= PRESS_WINDOW_MS) {
-    pressCount += 1;
-  } else {
-    pressCount = 0;
-  }
-  lastPressAtMs = now;
-}
-
 function setStatus(msg) {
-  statusEl.textContent = `[#${pressCount}] ${msg}`;
+  statusEl.textContent = msg;
 }
 
 // =========================
@@ -53,11 +36,12 @@ function sleep(ms) {
 }
 
 // =========================
-// ⏱ Timer delay (wait BEFORE firing webhook)
+// ⏱ Timer + Batch mode controls
 // =========================
 const timerToggle = document.getElementById("timerToggle");
 const timerSeconds = document.getElementById("timerSeconds");
 const timerIndicator = document.getElementById("timerIndicator");
+const allAtOnceToggle = document.getElementById("allAtOnceToggle");
 
 function isTimerOn() {
   return !!timerToggle?.checked;
@@ -68,8 +52,13 @@ function getDelaySeconds() {
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
+function isAllAtOnceOn() {
+  return !!allAtOnceToggle?.checked;
+}
+
 function updateTimerIndicator() {
   if (!timerIndicator) return;
+
   if (isTimerOn()) {
     timerIndicator.style.background = "#00c853"; // green
     timerIndicator.style.boxShadow = "0 0 10px rgba(0, 200, 83, 0.35)";
@@ -78,6 +67,7 @@ function updateTimerIndicator() {
     timerIndicator.style.boxShadow = "0 0 10px rgba(176, 0, 32, 0.35)";
   }
 }
+
 timerToggle?.addEventListener("change", updateTimerIndicator);
 updateTimerIndicator();
 
@@ -107,11 +97,50 @@ unlockBtn.addEventListener("click", () => {
 });
 
 // =========================
+// All-at-once batching state
+// =========================
+// For each hook key, we keep a batch object if batching is active.
+// A batch holds queued payloads and one timer that releases them together.
+const batches = new Map(); // key -> { payloads: [], timeoutId: number|null }
+
+function queueBatch(key, url, payload, secs) {
+  let batch = batches.get(key);
+  if (!batch) {
+    batch = { payloads: [], timeoutId: null };
+    batches.set(key, batch);
+  }
+
+  batch.payloads.push(payload);
+  const count = batch.payloads.length;
+
+  // If no timer yet, start one. All queued payloads will fire together when it ends.
+  if (!batch.timeoutId) {
+    batch.timeoutId = setTimeout(async () => {
+      const payloadsToFire = batch.payloads.slice();
+      batch.payloads = [];
+      clearTimeout(batch.timeoutId);
+      batch.timeoutId = null;
+
+      setStatus(`⏳ ${key}: firing ${payloadsToFire.length} queued at once...`);
+
+      // Fire all at once (parallel)
+      await Promise.allSettled(
+        payloadsToFire.map(async (p) => {
+          try {
+            await fireZapier(url, p);
+          } catch (_) {}
+        })
+      );
+
+      setStatus(`✅ ${key}: fired ${payloadsToFire.length} at once`);
+    }, Math.max(0, secs) * 1000);
+  }
+
+  return count;
+}
+
+// =========================
 // ✅ Webhook buttons
-// - NO lockout
-// - Multiple clicks allowed
-// - Each click queues its own delayed fire
-// - Press counter increments if within 10s of last press
 // =========================
 document.querySelectorAll("button[data-hook]").forEach((btn) => {
   // Guard against double-binding
@@ -123,9 +152,6 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       setStatus("🔒 Locked.");
       return;
     }
-
-    // ✅ update streak counter on EVERY press
-    recordPressAndUpdateCount();
 
     const key = btn.dataset.hook;
     const url = WEBHOOKS[key];
@@ -141,10 +167,16 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       source: "hatsuinemiku.com",
     };
 
-    // Determine delay per click
     const secs = isTimerOn() ? getDelaySeconds() : 0;
 
-    // Track queued count per button (UI only)
+    // Mode A: All-at-once batching
+    if (isTimerOn() && isAllAtOnceOn() && secs > 0) {
+      const count = queueBatch(key, url, payload, secs);
+      setStatus(`⏳ ${key}: queued (${count}) — will all fire in ${secs}s`);
+      return;
+    }
+
+    // Mode B: Normal (each click fires secs after its own click)
     const qKey = `q_${key}`;
     const current = Number(btn.dataset[qKey] || "0") || 0;
     btn.dataset[qKey] = String(current + 1);
@@ -155,23 +187,17 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
       setStatus(`⏳ ${key}: queued (${current + 1}) — firing now`);
     }
 
-    // Fire in background (do not block UI)
     (async () => {
       try {
         if (secs > 0) await sleep(secs * 1000);
 
-        // decrement queued just before firing
-        const remaining = Math.max(
-          0,
-          (Number(btn.dataset[qKey] || "1") || 1) - 1
-        );
+        const remaining = Math.max(0, (Number(btn.dataset[qKey] || "1") || 1) - 1);
         btn.dataset[qKey] = String(remaining);
 
         setStatus(`⏳ ${key}: triggering...`);
         const ok = await fireZapier(url, payload);
         setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
       } catch (err) {
-        // Keep original behavior: assume success if fetch throws
         setStatus(`✅ ${key} triggered`);
       }
     })();
