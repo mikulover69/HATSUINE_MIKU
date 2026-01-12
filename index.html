@@ -18,37 +18,49 @@
     h1 { margin-bottom: 6px; }
     p { margin-top: 0; opacity: 0.8; }
 
-    /* 🔐 Lock area */
-    #lock {
-      display: flex;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    #lock input {
-      flex: 1;
+    /* 🔑 Key bar */
+    .keyBar {
+      margin-bottom: 20px;
       padding: 14px;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
+      border-radius: 14px;
+      background: #191925;
+      display: grid;
+      grid-template-columns: 90px 1fr 90px 16px;
+      gap: 10px;
+      align-items: center;
     }
 
-    #lock button {
-      padding: 14px 20px;
+    .keyBar input {
+      padding: 10px 12px;
       border-radius: 12px;
       border: none;
-      background: #444;
-      color: #fff;
+      font-size: 14px;
+    }
+
+    .keyBar button {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      background: #2a2a3a;
+      color: white;
       cursor: pointer;
     }
 
+    #keyDot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: #b00020;
+      box-shadow: 0 0 10px rgba(176,0,32,.35);
+    }
+
     .status {
-      margin-top: 14px;
+      margin-top: 8px;
       font-family: ui-monospace, monospace;
       opacity: 0.9;
     }
 
-    /* ⏱ Timer UI */
+    /* ⏱ Timer */
     #timerRow {
       margin-top: 18px;
       display: flex;
@@ -65,15 +77,13 @@
       gap: 10px;
       align-items: center;
       font-size: 14px;
-      opacity: 0.95;
     }
 
     #timerSeconds {
-      width: 110px;
-      padding: 10px 12px;
+      width: 100px;
+      padding: 8px 10px;
       border-radius: 12px;
       border: none;
-      font-size: 14px;
     }
 
     #timerIndicator {
@@ -81,23 +91,14 @@
       height: 14px;
       border-radius: 4px;
       background: #b00020;
-      box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
-      display: inline-block;
     }
 
-    /* 🧪 Test Controls */
+    /* 🧪 Test controls */
     .panel {
       margin-top: 18px;
       padding: 16px;
       border-radius: 14px;
       background: #191925;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .panel h2 {
-      margin: 0 0 12px 0;
-      font-size: 16px;
-      opacity: 0.95;
     }
 
     .stimRow {
@@ -109,63 +110,43 @@
       border-top: 1px solid rgba(255,255,255,0.06);
     }
 
-    .stimRow:first-of-type {
-      border-top: none;
-    }
-
-    .stimName {
-      font-size: 14px;
-      opacity: 0.9;
-    }
+    .stimRow:first-child { border-top: none; }
 
     .stimValue {
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: none;
-      font-size: 14px;
-      width: 80px
+      width: 70px;
       text-align: center;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: none;
     }
 
     .stimBtn {
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-radius: 12px;
       border: none;
       background: #2a2a3a;
       color: white;
       cursor: pointer;
     }
-
-    .mono {
-      margin-top: 12px;
-      font-family: ui-monospace, monospace;
-      opacity: 0.9;
-    }
-
-    @media (max-width: 640px) {
-      .stimRow {
-        grid-template-columns: 1fr;
-      }
-      .stimBtn {
-        width: 100%;
-      }
-    }
   </style>
 </head>
 
 <body>
+
+  <!-- 🔑 Key bar -->
+  <div class="keyBar">
+    <strong>Key</strong>
+    <input type="password" id="keyInput" placeholder="Paste key…" />
+    <button id="saveKey">Save</button>
+    <div id="keyDot"></div>
+  </div>
+
+  <div class="status" id="status">Key not verified.</div>
+
   <h1>Be Sweet ^w^</h1>
   <p>&gt;w&lt;</p>
 
-  <!-- 🔐 Lock -->
-  <div id="lock">
-    <input type="password" id="codeInput" placeholder="Enter code" />
-    <button id="unlockBtn">Unlock</button>
-  </div>
-
-  <div class="status" id="status">🔒 Locked.</div>
-
-  <!-- ⏱ Timer (existing / placeholder) -->
+  <!-- ⏱ Timer -->
   <div id="timerRow">
     <label class="timerLabel">
       Timer?
@@ -175,93 +156,31 @@
 
     <label class="timerLabel">
       Seconds:
-      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
+      <input type="number" id="timerSeconds" value="5" min="0" />
     </label>
   </div>
 
   <!-- 🧪 Test Controls -->
   <section class="panel">
-    <h2>Test Controls</h2>
-
     <div class="stimRow" data-type="zap">
-      <div class="stimName">Zap</div>
-      <input class="stimValue" type="number" min="0" max="100" value="100" />
+      <div>Zap</div>
+      <input class="stimValue" value="50" />
       <button class="stimBtn">Send</button>
     </div>
 
     <div class="stimRow" data-type="vibe">
-      <div class="stimName">Vibration</div>
-      <input class="stimValue" type="number" min="0" max="100" value="100" />
+      <div>Vibration</div>
+      <input class="stimValue" value="50" />
       <button class="stimBtn">Send</button>
     </div>
 
     <div class="stimRow" data-type="beep">
-      <div class="stimName">Beep</div>
-      <input class="stimValue" type="number" min="0" max="100" value="100" />
+      <div>Beep</div>
+      <input class="stimValue" value="50" />
       <button class="stimBtn">Send</button>
     </div>
-
-    <div id="testStatus" class="mono">Ready.</div>
   </section>
 
-  <script>
-    const API_URL = "/stimulus"; // change to "/api/stimulus" if using Vercel API routes
-
-    let unlocked = false;
-
-    document.getElementById("unlockBtn").onclick = () => {
-      const val = document.getElementById("codeInput").value.trim();
-      if (!val) return;
-      unlocked = true;
-      window.WHIMPER_SECRET = val;
-      document.getElementById("status").textContent = "🔓 Unlocked.";
-    };
-
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
-    }
-
-    async function sendStimulus(type, value) {
-      const statusEl = document.getElementById("testStatus");
-      statusEl.textContent = `Sending ${type} (${value})...`;
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(unlocked ? { "X-Whimper-Secret": window.WHIMPER_SECRET } : {})
-          },
-          body: JSON.stringify({
-            type,
-            intensity: value,
-            reason: `UI test: ${type} ${value}`
-          })
-        });
-
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-
-        statusEl.textContent = `✅ Sent ${type} (${value})`;
-      } catch (err) {
-        statusEl.textContent = `❌ ${err.message}`;
-      }
-    }
-
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".stimBtn");
-      if (!btn) return;
-
-      const row = btn.closest(".stimRow");
-      const type = row.dataset.type;
-      const input = row.querySelector(".stimValue");
-
-      const raw = Number(input.value);
-      const value = clamp(Number.isFinite(raw) ? raw : 0, 0, 100);
-      input.value = value;
-
-      sendStimulus(type, value);
-    });
-  </script>
+  <script src="./script.js"></script>
 </body>
 </html>
