@@ -1,1 +1,200 @@
 
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Webhook Control Panel</title>
+
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      padding: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #0f0f14;
+      color: #fff;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+    }
+
+    p {
+      margin-top: 0;
+      opacity: 0.8;
+    }
+
+    /* 🔐 Lock area */
+    #lock {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    #lock input {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+    }
+
+    #lock button {
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: none;
+      background: #444;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 18px;
+      font-size: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: #2a2a3a;
+      color: white;
+      transition: transform 0.1s ease, opacity 0.1s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 🔴 Normal danger */
+    button.danger {
+      background: #c0392b;
+    }
+
+    /* 🔥 SUPER RED */
+    button.super-danger {
+      background: #ff0000;
+      box-shadow: 0 0 18px #ff0000aa;
+      font-weight: 700;
+    }
+
+    button.super-danger:hover:not(:disabled) {
+      box-shadow: 0 0 28px #ff0000cc;
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .status {
+      margin-top: 24px;
+      font-family: ui-monospace, monospace;
+      white-space: pre-wrap;
+      opacity: 0.9;
+    }
+
+    /* ⏱ Timer UI */
+    #timerRow {
+      margin-top: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px;
+      border-radius: 14px;
+      background: #191925;
+    }
+
+    .timerLabel {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.95;
+    }
+
+    #timerSeconds {
+      width: 110px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+    }
+
+    #timerIndicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      background: #b00020; /* red default */
+      box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
+      display: inline-block;
+    }
+
+    #cooldownReadout {
+      font-family: ui-monospace, monospace;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Be Sweet ^w^</h1>
+  <p>>w<</p>
+
+  <!-- 🔐 Passcode lock -->
+  <div id="lock">
+    <input type="password" id="codeInput" placeholder="Enter code" />
+    <button id="unlockBtn">Unlock</button>
+  </div>
+
+  <div class="grid">
+    <button class="danger" data-hook="hook1">100%</button>
+    <button data-hook="hook2">75%</button>
+    <button data-hook="hook3">60%</button>
+
+    <button data-hook="hook4">Beep 100%</button>
+    <button data-hook="hook5">Beep 60%</button>
+    <button data-hook="hook6">Beep 40%</button>
+
+    <button data-hook="hook7">Vibrate 100%</button>
+    <button data-hook="hook8">Vibrate 60%</button>
+    <button data-hook="hook9">Beep 3 Times</button>
+
+    <button class="super-danger" data-hook="hook10">Dont press pls</button>
+  </div>
+
+  <div class="status" id="status">🔒 Locked.</div>
+
+  <!-- ⏱ Timer Controls -->
+  <div id="timerRow">
+    <label class="timerLabel">
+      Timer?
+      <input type="checkbox" id="timerToggle" />
+      <span id="timerIndicator" title="Timer status"></span>
+    </label>
+
+    <label class="timerLabel">
+      Seconds:
+      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
+    </label>
+
+    <div id="cooldownReadout">Timer: off</div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
