@@ -13,20 +13,29 @@ export default async function handler(req, res) {
   }
 
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  // allow our custom header too
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Whimper-Secret");
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false });
 
-  const expected = process.env.PASSCODE;
-  if (!expected) return res.status(500).json({ ok: false, error: "PASSCODE not set" });
+  // Prefer WHIMPER_SECRET, fall back to PASSCODE
+  const expected = process.env.WHIMPER_SECRET ?? process.env.PASSCODE;
+  if (!expected) {
+    return res
+      .status(500)
+      .json({ ok: false, error: "WHIMPER_SECRET/PASSCODE not set" });
+  }
 
   try {
+    // Accept either header or body
+    const headerSecret = req.headers["x-whimper-secret"];
     const { code } = req.body || {};
-    const a = String(code ?? "");
+
+    const attempt = String(headerSecret ?? code ?? "");
     const b = String(expected);
 
-    const ok = a.length === b.length && safeEqual(a, b);
+    const ok = attempt.length === b.length && safeEqual(attempt, b);
 
     // small delay (helps a little vs brute forcing)
     await sleep(150);
