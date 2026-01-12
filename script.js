@@ -1,11 +1,32 @@
 const API_VERIFY = "/api/verify";
 const API_STIMULUS = "/api/stimulus";
 const STORAGE_KEY = "whimper_secret";
+const reasonToggle = document.getElementById("reasonToggle");
+const reasonInput = document.getElementById("reasonInput");
+const reasonIndicator = document.getElementById("reasonIndicator");
+
+
 
 const keyInput = document.getElementById("keyInput");
 const saveKeyBtn = document.getElementById("saveKey");
 const keyDot = document.getElementById("keyDot");
 const statusEl = document.getElementById("status");
+
+function updateReasonIndicator() {
+  if (!reasonIndicator) return;
+
+  if (reasonToggle?.checked) {
+    reasonIndicator.style.background = "#00c853"; // green
+    reasonIndicator.style.boxShadow = "0 0 10px rgba(0, 200, 83, 0.35)";
+  } else {
+    reasonIndicator.style.background = "#b00020"; // red
+    reasonIndicator.style.boxShadow = "0 0 10px rgba(176, 0, 32, 0.35)";
+  }
+}
+
+reasonToggle?.addEventListener("change", updateReasonIndicator);
+updateReasonIndicator();
+
 
 function setDot(ok, msg) {
   if (ok) {
