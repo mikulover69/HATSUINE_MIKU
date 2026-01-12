@@ -76,30 +76,6 @@
       cursor: not-allowed;
     }
 
-    /* 🔴 Normal danger */
-    button.danger {
-      background: #c0392b;
-    }
-
-    /* 🔥 SUPER RED */
-    button.super-danger {
-      background: #ff0000;
-      box-shadow: 0 0 18px #ff0000aa;
-      font-weight: 700;
-    }
-
-    button.super-danger:hover:not(:disabled) {
-      box-shadow: 0 0 28px #ff0000cc;
-      transform: translateY(-3px) scale(1.02);
-    }
-
-    .status {
-      margin-top: 24px;
-      font-family: ui-monospace, monospace;
-      white-space: pre-wrap;
-      opacity: 0.9;
-    }
-
     /* ⏱ Timer UI */
     #timerRow {
       margin-top: 18px;
@@ -178,21 +154,6 @@
   </div>
 
   <script src="./script.js"></script>
-    
-    <button class="danger" data-hook="hook1">100%</button>
-    <button data-hook="hook2">75%</button>
-    <button data-hook="hook3">60%</button>
-
-    <button data-hook="hook4">Beep 100%</button>
-    <button data-hook="hook5">Beep 60%</button>
-    <button data-hook="hook6">Beep 40%</button>
-
-    <button data-hook="hook7">Vibrate 100%</button>
-    <button data-hook="hook8">Vibrate 60%</button>
-    <button data-hook="hook9">Beep 3 Times</button>
-
-    <button class="super-danger" data-hook="hook10">Dont press pls</button>
-  </div>
 
   <div class="status" id="status">🔒 Locked.</div>
 
