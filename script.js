@@ -95,7 +95,8 @@ unlockBtn.addEventListener("click", async () => {
   try {
     setStatus("⏳ Checking code...");
 
-    const res = await fetch("/api/verify", {
+    // IMPORTANT: absolute URL since your page is on hatsuinemiku.com
+    const res = await fetch("https://hatsuine-miku.vercel.app/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code: attempt }),
@@ -169,7 +170,10 @@ document.querySelectorAll("button[data-hook]").forEach((btn) => {
         if (secs > 0) await sleep(secs * 1000);
 
         // decrement queued just before firing
-        const remaining = Math.max(0, (Number(btn.dataset[qKey] || "1") || 1) - 1);
+        const remaining = Math.max(
+          0,
+          (Number(btn.dataset[qKey] || "1") || 1) - 1
+        );
         btn.dataset[qKey] = String(remaining);
 
         setStatus(`⏳ ${key}: triggering...`);
