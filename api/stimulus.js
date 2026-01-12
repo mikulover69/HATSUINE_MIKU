@@ -10,7 +10,20 @@ export default async function handler(req, res) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
 
-  const { type = "vibe", intensity = 50, reason = "website trigger" } = req.body || {};
+  let type = "vibe";
+let intensity = 50;
+let reason = "website trigger";
+
+try {
+  if (req.body && typeof req.body === "object") {
+    type = req.body.type ?? type;
+    intensity = req.body.intensity ?? intensity;
+    reason = req.body.reason ?? reason;
+  }
+} catch {
+  // keep defaults
+}
+
 
   try {
     const r = await fetch("https://api.pavlok.com/api/v5/stimulus/send", {
