@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Webhook Control Panel</title>
+  <title>RAWR</title>
 
   <style>
     body {
@@ -161,6 +161,24 @@
   </div>
 
   <div class="grid">
+ <!-- ⏱ Timer Controls -->
+  <div id="timerRow">
+    <label class="timerLabel">
+      Timer?
+      <input type="checkbox" id="timerToggle" />
+      <span id="timerIndicator" title="Timer status"></span>
+    </label>
+
+    <label class="timerLabel">
+      Seconds:
+      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
+    </label>
+
+    <div id="cooldownReadout">Timer: off</div>
+  </div>
+
+  <script src="./script.js"></script>
+    
     <button class="danger" data-hook="hook1">100%</button>
     <button data-hook="hook2">75%</button>
     <button data-hook="hook3">60%</button>
@@ -178,22 +196,6 @@
 
   <div class="status" id="status">🔒 Locked.</div>
 
-  <!-- ⏱ Timer Controls -->
-  <div id="timerRow">
-    <label class="timerLabel">
-      Timer?
-      <input type="checkbox" id="timerToggle" />
-      <span id="timerIndicator" title="Timer status"></span>
-    </label>
-
-    <label class="timerLabel">
-      Seconds:
-      <input type="number" id="timerSeconds" min="0" step="1" value="5" />
-    </label>
-
-    <div id="cooldownReadout">Timer: off</div>
-  </div>
-
-  <script src="./script.js"></script>
+ 
 </body>
 </html>
