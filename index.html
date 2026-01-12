@@ -6,6 +6,37 @@
   <title>RAWR</title>
 
   <style>
+
+/* 📝 Reason UI */
+#reasonRow {
+  margin-top: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: 14px;
+  background: #191925;
+}
+
+#reasonInput {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+}
+
+#reasonIndicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: #b00020; /* red default */
+  box-shadow: 0 0 10px rgba(176, 0, 32, 0.35);
+  display: inline-block;
+}
+
+    
     body {
       font-family: system-ui, Arial, sans-serif;
       padding: 32px;
@@ -146,6 +177,22 @@
   <h1>Be Sweet ^w^</h1>
   <p>&gt;w&lt;</p>
 
+  <!-- 📝 Reason Override -->
+<div id="reasonRow">
+  <label class="timerLabel">
+    Custom Reason?
+    <input type="checkbox" id="reasonToggle" />
+    <span id="reasonIndicator"></span>
+  </label>
+
+  <input
+    type="text"
+    id="reasonInput"
+    placeholder="bad"
+  />
+</div>
+
+  
   <!-- ⏱ Timer -->
   <div id="timerRow">
     <label class="timerLabel">
