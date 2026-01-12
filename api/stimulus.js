@@ -19,11 +19,17 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.PAVLOK_API_KEY}`, // raw token only
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        stimulus: {
-          stimulusType: type,
-          stimulusValue: intensity,
-          reason,
+     const customReason =
+  reasonToggle?.checked && reasonInput?.value.trim()
+    ? reasonInput.value.trim()
+    : `UI test: ${type} ${value}`;
+
+body: JSON.stringify({
+  type,
+  intensity: value,
+  reason: customReason,
+}),
+
         },
       }),
     });
