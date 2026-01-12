@@ -1,188 +1,92 @@
-const WEBHOOKS = {
-  hook1: "https://hooks.zapier.com/hooks/catch/25934949/uwkjao5/",
-  hook2: "https://hooks.zapier.com/hooks/catch/25934949/uwfbwpx/",
-  hook3: "https://hooks.zapier.com/hooks/catch/25934949/uwfbcir/",
-  hook4: "https://hooks.zapier.com/hooks/catch/25934949/uwf36ad/",
-  hook5: "https://hooks.zapier.com/hooks/catch/25934949/uwf3efi/",
-  hook6: "https://hooks.zapier.com/hooks/catch/25934949/uwfusr7/",
-  hook7: "https://hooks.zapier.com/hooks/catch/25934949/uwf438a/",
-  hook8: "https://hooks.zapier.com/hooks/catch/25934949/uwf47mv/",
-  hook9: "https://hooks.zapier.com/hooks/catch/25934949/uwf6ri2/",
-  hook10: "https://hooks.zapier.com/hooks/catch/25934949/uwf62w8/",
-};
+const API_STIMULUS = "/api/stimulus";
+const API_VERIFY = "/api/verify";
+const STORAGE_KEY = "whimper_key";
 
-// =========================
-// Elements
-// =========================
+const keyInput = document.getElementById("keyInput");
+const saveKeyBtn = document.getElementById("saveKey");
+const keyDot = document.getElementById("keyDot");
 const statusEl = document.getElementById("status");
-const buttons = document.querySelectorAll(".grid button");
-const unlockBtn = document.getElementById("unlockBtn");
-const codeInput = document.getElementById("codeInput");
 
-const timerToggle = document.getElementById("timerToggle");
-const timerSeconds = document.getElementById("timerSeconds");
-const timerIndicator = document.getElementById("timerIndicator");
-const cooldownReadout = document.getElementById("cooldownReadout");
-
-// =========================
-// State
-// =========================
-let unlocked = false;
-
-// =========================
-// UI helpers
-// =========================
-function setStatus(msg) {
-  statusEl.textContent = msg;
-}
-
-function isTimerOn() {
-  return !!timerToggle?.checked;
-}
-
-function getDelaySeconds() {
-  const n = Number(timerSeconds?.value);
-  return Number.isFinite(n) && n > 0 ? n : 0;
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function updateTimerIndicator() {
-  if (!timerIndicator) return;
-
-  if (isTimerOn()) {
-    timerIndicator.style.background = "#00c853"; // green
-    timerIndicator.style.boxShadow = "0 0 10px rgba(0, 200, 83, 0.35)";
-    cooldownReadout.textContent = "Timer: on";
+function setDot(ok) {
+  if (ok) {
+    keyDot.style.background = "#2e7d32";
+    keyDot.style.boxShadow = "0 0 10px rgba(46,125,50,.35)";
+    statusEl.textContent = "✅ Key verified.";
   } else {
-    timerIndicator.style.background = "#b00020"; // red
-    timerIndicator.style.boxShadow = "0 0 10px rgba(176, 0, 32, 0.35)";
-    cooldownReadout.textContent = "Timer: off";
+    keyDot.style.background = "#b00020";
+    keyDot.style.boxShadow = "0 0 10px rgba(176,0,32,.35)";
+    statusEl.textContent = "❌ Invalid key.";
   }
 }
 
-timerToggle?.addEventListener("change", updateTimerIndicator);
-updateTimerIndicator();
-
-// =========================
-// Network helpers
-// =========================
-async function fireZapier(url, payload) {
-  const res = await fetch(url, {
+async function verifyKey(key) {
+  const res = await fetch(API_VERIFY, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    headers: { "X-Whimper-Secret": key }
   });
   return res.ok;
 }
 
-// =========================
-// 🔐 Lock initial state
-// =========================
-buttons.forEach((btn) => {
-  btn.disabled = true;
-});
+saveKeyBtn.onclick = async () => {
+  const key = keyInput.value.trim();
+  if (!key) return;
 
-// =========================
-// 🔐 Unlock via Vercel serverless verify endpoint
-// =========================
-unlockBtn.addEventListener("click", async () => {
-  const attempt = codeInput.value;
-  codeInput.value = "";
+  localStorage.setItem(STORAGE_KEY, key);
+  window.WHIMPER_SECRET = key;
 
   try {
-    setStatus("⏳ Checking code...");
+    setDot(await verifyKey(key));
+  } catch {
+    statusEl.textContent = "⚠️ Verify failed.";
+  }
+};
 
-    // IMPORTANT: absolute URL since your page is on hatsuinemiku.com
-    const res = await fetch("https://hatsuine-miku.vercel.app/api/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: attempt }),
-    });
-
-    // If verify endpoint isn't deployed or errors out
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      setStatus(`❌ Verify error (${res.status}). ${txt}`.slice(0, 180));
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data.ok) {
-      unlocked = true;
-      buttons.forEach((btn) => (btn.disabled = false));
-      setStatus("🔓 Unlocked.");
-    } else {
-      setStatus("❌ Wrong code.");
-    }
-  } catch (e) {
-    setStatus("❌ Verify failed (server/network).");
+window.addEventListener("DOMContentLoaded", async () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    window.WHIMPER_SECRET = saved;
+    keyInput.value = saved;
+    try {
+      setDot(await verifyKey(saved));
+    } catch {}
   }
 });
 
-// =========================
-// ✅ Button firing logic (no lockout, supports multiple presses)
-// Timer ON => wait X seconds BEFORE firing webhook
-// =========================
-document.querySelectorAll("button[data-hook]").forEach((btn) => {
-  // Guard against double-binding
-  if (btn.dataset.bound === "1") return;
-  btn.dataset.bound = "1";
+// ======================
+// Stimulus buttons
+// ======================
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".stimBtn");
+  if (!btn) return;
 
-  btn.addEventListener("click", () => {
-    if (!unlocked) {
-      setStatus("🔒 Locked.");
-      return;
-    }
+  if (!window.WHIMPER_SECRET) {
+    statusEl.textContent = "🔒 No key set.";
+    return;
+  }
 
-    const key = btn.dataset.hook;
-    const url = WEBHOOKS[key];
+  const row = btn.closest(".stimRow");
+  const type = row.dataset.type;
+  const value = Math.max(0, Math.min(100, Number(row.querySelector(".stimValue").value)));
 
-    if (!url) {
-      setStatus(`❌ Missing webhook for ${key}`);
-      return;
-    }
+  statusEl.textContent = `Sending ${type} (${value})…`;
 
-    const payload = {
-      button: key,
-      fired_at: new Date().toISOString(),
-      source: "hatsuinemiku.com",
-    };
+  try {
+    const res = await fetch(API_STIMULUS, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Whimper-Secret": window.WHIMPER_SECRET
+      },
+      body: JSON.stringify({
+        type,
+        intensity: value,
+        reason: `UI ${type} ${value}`
+      })
+    });
 
-    const secs = isTimerOn() ? getDelaySeconds() : 0;
-
-    // queue counter (UI only)
-    const qKey = `q_${key}`;
-    const current = Number(btn.dataset[qKey] || "0") || 0;
-    btn.dataset[qKey] = String(current + 1);
-
-    if (secs > 0) {
-      setStatus(`⏳ ${key}: queued (${current + 1}) — fires in ${secs}s`);
-    } else {
-      setStatus(`⏳ ${key}: queued (${current + 1}) — firing now`);
-    }
-
-    (async () => {
-      try {
-        if (secs > 0) await sleep(secs * 1000);
-
-        // decrement queued just before firing
-        const remaining = Math.max(
-          0,
-          (Number(btn.dataset[qKey] || "1") || 1) - 1
-        );
-        btn.dataset[qKey] = String(remaining);
-
-        setStatus(`⏳ ${key}: triggering...`);
-        const ok = await fireZapier(url, payload);
-        setStatus(ok ? `✅ ${key} triggered` : `❌ ${key} failed`);
-      } catch (err) {
-        // keep your original "assume success" fallback
-        setStatus(`✅ ${key} triggered`);
-      }
-    })();
-  });
+    if (!res.ok) throw new Error(await res.text());
+    statusEl.textContent = `✅ ${type} sent (${value})`;
+  } catch (err) {
+    statusEl.textContent = "❌ Send failed.";
+  }
 });
