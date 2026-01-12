@@ -13,37 +13,27 @@ export default async function handler(req, res) {
   }
 
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  // allow our custom header too
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Whimper-Secret");
 
   if (req.method === "OPTIONS") return res.status(204).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false });
 
-  // Prefer WHIMPER_SECRET, fall back to PASSCODE
-  const expected = process.env.WHIMPER_SECRET ?? process.env.PASSCODE;
+  // ✅ Match stimulus.js: use WHIMPER_SECRET + header
+  const expected = process.env.WHIMPER_SECRET;
   if (!expected) {
-    return res
-      .status(500)
-      .json({ ok: false, error: "WHIMPER_SECRET/PASSCODE not set" });
+    return res.status(500).json({ ok: false, error: "WHIMPER_SECRET not set" });
   }
 
-  try {
-    // Accept either header or body
-    const headerSecret = req.headers["x-whimper-secret"];
-    const { code } = req.body || {};
+  const got = req.headers["x-whimper-secret"];
+  const a = String(got ?? "");
+  const b = String(expected);
 
-    const attempt = String(headerSecret ?? code ?? "");
-    const b = String(expected);
+  const ok = a.length === b.length && safeEqual(a, b);
 
-    const ok = attempt.length === b.length && safeEqual(attempt, b);
+  // small delay (helps a little vs brute forcing)
+  await sleep(150);
 
-    // small delay (helps a little vs brute forcing)
-    await sleep(150);
-
-    return res.status(200).json({ ok });
-  } catch {
-    return res.status(400).json({ ok: false });
-  }
+  return res.status(200).json({ ok });
 }
 
 function safeEqual(a, b) {
